@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     PeriodEndData: DataTypes.DATEONLY,
     ExpenseAmount: DataTypes.INTEGER
   }, {
+    timestamps: false,
+    freezeTableName: true,
     classMethods: {
       associate: function(models) {
         // associations can be defined here

@@ -1,37 +1,78 @@
 $(document).ready(() => {
 
-	const $userInfo = $('#userInfo');
+	// ---------- Global Variables ---------- //
+	const $display = $('#d3display');
+	let properties = [];
 
-	let users = [];
+	// ---------- Event Handlers ---------- //
+	$('#propSelectDropDown').on('change', handlePropSelect);
 	
-	getReq();
+	function handlePropSelect() {
+    let selectedPropertyID = $(this).val();
+    getReq(selectedPropertyID);
+  }
 
-	function getReq () {
-	  $.get("/users", (data) => {
-	    users = data;
-	    initializeRows();
+	// ---------- Functions ---------- //
+	function getReq (ID) {
+	  $.get("/api/"+ID, (data) => {
+			console.log('Get req', data);
+	    properties = data;
+	    initializeTable(ID);
 	  });
 	}
 
-	function initializeRows() {
-    $userInfo.empty();
-    var rowsToAdd = [];
-    for (var i = 0; i < users.length; i++) {
-      rowsToAdd.push(showUsers(users[i]));
-    }
-    $userInfo.prepend(rowsToAdd);
+	function initializeTable(ID) {
+    $display.empty();
+    let tableBegin = 
+			"<table class='table'>"+
+				"<thead>"+
+					"<tr>"+
+						"<th scope='col'>#</th>"+
+						"<th scope='col'>Expense Account</th>"+
+						"<th scope='col'>Expense Amount</th>"+
+						"<th scope='col'>Period End Date</th>"+
+					"</tr>"+
+				"</thead>"+
+				"<tbody>";
+
+    for (var i = 0; i < properties.length; i++) {
+			let eachPropertyDisplay = 
+			"<tr><th scope='row'>"+(i+1)+"</th>"+
+			"<td>"+properties[i].AccountID+"</td>"+
+			"<td>$"+properties[i].ExpenseAmount+",000.00</td>"+
+			"<td>"+properties[i].PeriodEndData+"</td></tr>";
+
+      tableBegin += eachPropertyDisplay;
+		}
+
+		let finishTable = "</tbody></table>";
+		let totalTable = tableBegin+finishTable;
+		console.log(totalTable);
+    $display.prepend(totalTable);
   }
 
-  function showUsers (users) {
-  	let $eachUserDisplay = $(
+  function showProperty (property, i) {
+  	let $eachPropertyDisplay = $(
   		[
-  			"<p>",
-  			users.firstName,
-  			"</p>"
+				"<tr>",
+					"<th scope='row'>",
+					(i+1),
+					"</th>",
+					"<td>",
+					property.AccountID,
+					"</td>",
+					"<td>",
+					"$"+property.ExpenseAmount+",000.00",
+					"</td>",
+					"<td>",
+					property.PeriodEndData,
+					"</td>",
+				"</tr>"
   		].join("")
 		);
 
-		return $eachUserDisplay;
+		return $eachPropertyDisplay;
+		console.log($eachPropertyDisplay);
   }
 
 });

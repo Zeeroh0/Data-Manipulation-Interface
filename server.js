@@ -1,7 +1,5 @@
-const express = require("express");
 const bodyParser = require("body-parser");
-
-const db = require("./models");
+const express = require("express");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -13,14 +11,18 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Set up routes
-const routes = require("./controller/routes.js");
+// Static directory
+app.use(express.static("public"));
 
-app.use("/", routes);
+// Bring in the models
+const db = require("./models");
+
+// Bring in the routes
+const routes = require('./routes/api-routes.js');
+routes(app);
 
 // Syncing the sequelize models and then starting the Express app
-// =============================================================
-db.sequelize.sync({ force: true }).then(function() {
+db.sequelize.sync({/* force: true */}).then(function() {
   app.listen(PORT, function() {
     console.log("App listening on PORT " + PORT);
   });
