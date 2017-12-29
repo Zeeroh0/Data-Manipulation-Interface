@@ -4,6 +4,11 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Keep Heroku live
+setInterval(function() {
+  http.get("http://mysterious-ridge-78153.herokuapp.com/");
+  }, 300000);
+
 // Use the express.static middleware to serve static content for the app from the "public" directory in the application directory.
 app.use(express.static("public"));
 
